@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SDC Procurement Plan FY 2026–27 | KSITM</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --navy:    #0B2A5B;
+      --navy-dk: #071E42;
+      --gold:    #C19A4B;
+      --ice:     #E8EEF7;
+      --grey:    #4A5568;
+      --grey-lt: #98A2B3;
+      --red:     #9B1C2A;
+      --amber:   #C19A4B;
+      --green:   #2E6A3E;
+      --white:   #FFFFFF;
+      --body:    #1F2937;
+      --card-bg: #F7F9FC;
+      --border:  #D1D9E6;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Segoe UI', Calibri, Arial, sans-serif; background: #F0F4FA; color: var(--body); font-size: 14px; }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      background: var(--navy-dk);
+      color: #b0bfd8;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 7px 16px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--navy);
+      padding: 36px 40px 32px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      border-bottom: 4px solid var(--gold);
+    }
+    .hero-left h1 {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 4px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .hero-left h2 {
+      font-size: 32px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.15;
+    }
+    .hero-left h2 span { color: var(--gold); }
+    .hero-left p {
+      margin-top: 10px;
+      color: #99B2D4;
+      font-size: 13px;
+      max-width: 640px;
+      line-height: 1.6;
+    }
+    .hero-meta {
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(193,154,75,0.5);
+      border-radius: 8px;
+      padding: 18px 24px;
+      min-width: 240px;
+      flex-shrink: 0;
+    }
+    .hero-meta table { width: 100%; border-collapse: collapse; }
+    .hero-meta td { padding: 5px 0; font-size: 12px; }
+    .hero-meta td:first-child { color: var(--gold); font-weight: 700; padding-right: 16px; white-space: nowrap; }
+    .hero-meta td:last-child { color: #E8EEF7; }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+    }
+    nav a {
+      padding: 14px 20px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--grey);
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      border-bottom: 3px solid transparent;
+      white-space: nowrap;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    nav a:hover, nav a.active { color: var(--navy); border-bottom-color: var(--gold); }
+
+    /* ── MAIN LAYOUT ── */
+    main { max-width: 1280px; margin: 0 auto; padding: 32px 24px 60px; }
+    section { margin-bottom: 48px; }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .section-title .pill {
+      background: var(--gold);
+      color: var(--navy-dk);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+    .section-title h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    /* ── KPI STRIP ── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+    }
+    .kpi-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--navy);
+      border-radius: 8px;
+      padding: 20px 20px 16px;
+    }
+    .kpi-card.red   { border-left-color: var(--red); }
+    .kpi-card.gold  { border-left-color: var(--gold); }
+    .kpi-card.green { border-left-color: var(--green); }
+    .kpi-card .val {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .kpi-card.red   .val { color: var(--red); }
+    .kpi-card.gold  .val { color: var(--gold); }
+    .kpi-card.green .val { color: var(--green); }
+    .kpi-card .label { font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+    .kpi-card .desc  { font-size: 11px; color: var(--grey-lt); line-height: 1.4; }
+
+    /* ── GANTT ── */
+    .gantt-wrapper {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .gantt-header-row {
+      display: grid;
+      grid-template-columns: 2fr 0.7fr 1.1fr 1.1fr 1.1fr 1.1fr;
+      background: var(--navy);
+      padding: 0;
+    }
+    .gantt-header-row .gh {
+      padding: 10px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      border-right: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+    }
+    .gantt-header-row .gh:first-child { text-align: left; }
+    .gantt-header-row .gh .sub { font-size: 9px; letter-spacing: 0; font-weight: 400; color: #99B2D4; text-transform: none; }
+    .gantt-body { font-size: 12.5px; }
+    .gantt-row {
+      display: grid;
+      grid-template-columns: 2fr 0.7fr 1.1fr 1.1fr 1.1fr 1.1fr;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      transition: background 0.15s;
+    }
+    .gantt-row:last-child { border-bottom: none; }
+    .gantt-row:hover { background: var(--ice); }
+    .gantt-row.even { background: var(--card-bg); }
+    .gantt-row.even:hover { background: var(--ice); }
+    .gantt-cell {
+      padding: 9px 12px;
+      border-right: 1px solid var(--border);
+      text-align: center;
+    }
+    .gantt-cell:last-child { border-right: none; }
+    .gantt-cell.item-name { text-align: left; font-weight: 600; color: var(--body); }
+    .priority-chip {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: white;
+    }
+    .p1 { background: var(--red); }
+    .p2 { background: var(--gold); color: #1a1000; }
+    .p3 { background: var(--navy); }
+    .p4 { background: var(--green); }
+    .gantt-bar {
+      border-radius: 4px;
+      height: 22px;
+      margin: 0 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 0.5px;
+    }
+    .bar-p1 { background: var(--red); }
+    .bar-p2 { background: var(--gold); color: #1a1000; }
+    .bar-p3 { background: var(--navy); }
+    .bar-p4 { background: var(--green); }
+
+    /* ── DOMAIN CARDS ── */
+    .domain-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 18px;
+    }
+    .domain-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .domain-card-header {
+      background: var(--navy);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .domain-num {
+      width: 32px; height: 32px;
+      border-radius: 6px;
+      background: var(--gold);
+      color: var(--navy-dk);
+      font-weight: 800;
+      font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .domain-card-header h4 { color: white; font-size: 14px; font-weight: 700; }
+    .domain-card-header .domain-sub { color: #99B2D4; font-size: 11px; }
+    .domain-card-body { padding: 16px 18px; }
+    .risk-tag {
+      display: inline-block;
+      font-size: 10px; font-weight: 800; letter-spacing: 1px;
+      padding: 3px 8px; border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .risk-critical { background: #FEE2E2; color: var(--red); }
+    .risk-high     { background: #FEF3C7; color: #92400E; }
+    .risk-medium   { background: #EFF6FF; color: var(--navy); }
+    .domain-card-body p { font-size: 12.5px; color: var(--body); line-height: 1.6; margin-bottom: 10px; }
+    .domain-bullets { list-style: none; padding: 0; }
+    .domain-bullets li {
+      font-size: 12px; color: var(--grey); padding: 4px 0 4px 16px;
+      position: relative; line-height: 1.5;
+    }
+    .domain-bullets li::before {
+      content: '▪';
+      position: absolute; left: 0;
+      color: var(--gold);
+    }
+
+    /* ── PRIORITY TABLE ── */
+    .priority-table { width: 100%; border-collapse: collapse; }
+    .priority-table thead th {
+      background: var(--navy);
+      color: var(--gold);
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 12px 16px;
+      text-align: left;
+    }
+    .priority-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    .priority-table tbody tr:hover { background: var(--ice); }
+    .priority-table tbody tr:nth-child(even) { background: var(--card-bg); }
+    .priority-table tbody tr:nth-child(even):hover { background: var(--ice); }
+    .priority-table td { padding: 10px 16px; font-size: 12.5px; vertical-align: middle; }
+    .priority-table td:first-child { font-weight: 600; color: var(--body); }
+    .route-badge {
+      display: inline-block;
+      background: var(--ice);
+      border: 1px solid var(--border);
+      color: var(--navy);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .route-badge.tender { background: #F0F4FA; }
+
+    /* ── RECOMMENDATIONS ── */
+    .reco-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 18px;
+    }
+    .reco-card {
+      background: var(--white);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .reco-card-header {
+      padding: 14px 18px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: white;
+    }
+    .reco-card-header.imm { background: var(--red); }
+    .reco-card-header.str { background: var(--gold); color: var(--navy-dk); }
+    .reco-card-header.lng { background: var(--navy); }
+    .reco-list { list-style: none; padding: 16px 18px; }
+    .reco-list li {
+      display: flex; gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12.5px; color: var(--body); line-height: 1.5;
+    }
+    .reco-list li:last-child { border-bottom: none; }
+    .reco-list li .bullet { flex-shrink: 0; color: var(--gold); font-size: 16px; margin-top: -1px; }
+
+    /* ── DECISIONS ── */
+    .decisions-grid { display: flex; flex-direction: column; gap: 10px; }
+    .decision-row {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      overflow: hidden;
+    }
+    .decision-num {
+      background: var(--navy);
+      color: var(--gold);
+      font-size: 22px;
+      font-weight: 800;
+      width: 60px;
+      min-height: 56px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .decision-text { padding: 12px 20px; font-size: 13px; color: var(--body); line-height: 1.5; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy-dk);
+      color: #99B2D4;
+      text-align: center;
+      padding: 20px;
+      font-size: 11px;
+      letter-spacing: 1px;
+      border-top: 3px solid var(--gold);
+    }
+
+    @media (max-width: 768px) {
+      .hero { flex-direction: column; padding: 24px; }
+      .hero-left h2 { font-size: 22px; }
+      .hero-meta { min-width: unset; width: 100%; }
+      main { padding: 20px 16px 40px; }
+      .gantt-header-row, .gantt-row { grid-template-columns: 1.6fr 0.5fr 0.9fr 0.9fr 0.9fr 0.9fr; font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">Government of Kerala &nbsp;|&nbsp; Kerala State IT Mission &nbsp;|&nbsp; For Official Use &nbsp;|&nbsp; FY 2026–27</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-left">
+    <h1>KSITM &nbsp;|&nbsp; State Data Centre Division</h1>
+    <h2>SDC Procurement<br><span>Planning Report</span></h2>
+    <p>Financial Year 2026–27 &nbsp;·&nbsp; Two Tier-II facilities &nbsp;·&nbsp; Six procurement domains assessed &nbsp;·&nbsp; 20 actionable procurement items</p>
+  </div>
+  <div class="hero-meta">
+    <table>
+      <tr><td>Prepared by</td><td>State Data Centre Division, KSITM</td></tr>
+      <tr><td>Reviewed by</td><td>Director, Kerala State IT Mission</td></tr>
+      <tr><td>Report Date</td><td>April 2026</td></tr>
+      <tr><td>Financial Year</td><td>2026–27</td></tr>
+      <tr><td>Classification</td><td>For Official Use</td></tr>
+      <tr><td>Status</td><td>Draft for Internal Review</td></tr>
+    </table>
+  </div>
+</header>
+
+<!-- STICKY NAV -->
+<nav id="nav">
+  <a href="#kpis" class="active">Overview</a>
+  <a href="#schedule">Schedule</a>
+  <a href="#domains">Domains</a>
+  <a href="#priorities">Priority Table</a>
+  <a href="#recommendations">Recommendations</a>
+  <a href="#decisions">Decisions Sought</a>
+</nav>
+
+<main>
+
+  <!-- KPI STRIP -->
+  <section id="kpis">
+    <div class="section-title">
+      <span class="pill">Overview</span>
+      <h3>Key Metrics</h3>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="val">2</div>
+        <div class="label">Tier-II SDC Facilities</div>
+        <div class="desc">SDC-1 at PMG Junction (2005) &amp; SDC-2 at Technopark (2012)</div>
+      </div>
+      <div class="kpi-card gold">
+        <div class="val">541+</div>
+        <div class="label">Government Websites Hosted</div>
+        <div class="desc">44 GoK departments &amp; bodies co-located as at 2017 audit baseline</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="val">13 yrs</div>
+        <div class="label">Since Last Security Audit</div>
+        <div class="desc">No independent third-party audit since CERT-K review in December 2013</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="val">6</div>
+        <div class="label">Procurement Domains</div>
+        <div class="desc">Compute, Storage, Network, Cybersecurity, Power/Cooling, Backup &amp; DR</div>
+      </div>
+      <div class="kpi-card">
+        <div class="val">20</div>
+        <div class="label">Procurement Line Items</div>
+        <div class="desc">Across Q1–Q4 FY 2026–27 via GeM and open tender routes</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="val">P1</div>
+        <div class="label">6 Critical Items in Q1</div>
+        <div class="desc">Including NGFW, UPS battery, FMS renewal, EOL server replacement, DR site</div>
+      </div>
+      <div class="kpi-card gold">
+        <div class="val">99.9%</div>
+        <div class="label">Target Uptime SLA</div>
+        <div class="desc">Minimum availability contractual requirement for primary site infrastructure</div>
+      </div>
+      <div class="kpi-card">
+        <div class="val">&lt;1.6</div>
+        <div class="label">Target PUE</div>
+        <div class="desc">Power Usage Effectiveness target; smart power metering across both facilities</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Q1-Q4 SCHEDULE GANTT -->
+  <section id="schedule">
+    <div class="section-title">
+      <span class="pill">Section 12</span>
+      <h3>Procurement Schedule — FY 2026–27</h3>
+    </div>
+    <div class="gantt-wrapper">
+      <div class="gantt-header-row">
+        <div class="gh">Procurement Item</div>
+        <div class="gh">Priority</div>
+        <div class="gh">Q1<div class="sub">Apr–Jun 2026</div></div>
+        <div class="gh">Q2<div class="sub">Jul–Sep 2026</div></div>
+        <div class="gh">Q3<div class="sub">Oct–Dec 2026</div></div>
+        <div class="gh">Q4<div class="sub">Jan–Mar 2027</div></div>
+      </div>
+      <div class="gantt-body" id="gantt-body">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+    <p style="font-size:11px;color:var(--grey-lt);margin-top:10px;">Route column: <strong>GeM</strong> = Government e-Marketplace &nbsp;|&nbsp; <strong>Tender</strong> = Open Competitive Tender &nbsp;|&nbsp; Coloured bars show planned execution quarter(s). Timelines assume budget approval and vendor empanelment by Q1.</p>
+  </section>
+
+  <!-- 6 DOMAIN CARDS -->
+  <section id="domains">
+    <div class="section-title">
+      <span class="pill">Sections 4–10</span>
+      <h3>Procurement Domains</h3>
+    </div>
+    <div class="domain-grid">
+
+      <div class="domain-card">
+        <div class="domain-card-header">
+          <div class="domain-num">1</div>
+          <div>
+            <h4>Compute Infrastructure</h4>
+            <div class="domain-sub">Section 4 — Servers &amp; Virtualisation</div>
+          </div>
+        </div>
+        <div class="domain-card-body">
+          <span class="risk-tag risk-critical">⚠ CRITICAL RISK</span>
+          <p>SDC-1 servers from 2005–2016 are at or past end-of-life. Hardware failure rates rise exponentially after Year 5. OEM support cessation means no patches, firmware, or spares.</p>
+          <ul class="domain-bullets">
+            <li>Rack-mounted x86-64 blade/rack servers — dual-socket Intel Xeon Scalable / AMD EPYC, PCIe Gen 5</li>
+            <li>High-memory servers (1 TB+ RAM) for DB and in-memory analytics</li>
+            <li>GPU-accelerated nodes for K-AI / AICTE-K inference workloads</li>
+            <li>VMware licensing evaluation — renew or migrate to KVM/Proxmox</li>
+            <li>E-waste decommissioning per E-Waste Management Rules 2022</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="domain-card">
+        <div class="domain-card-header">
+          <div class="domain-num">2</div>
+          <div>
+            <h4>Storage Infrastructure</h4>
+            <div class="domain-sub">Section 5 — Primary, Backup &amp; Fabric</div>
+          </div>
+        </div>
+        <div class="domain-card-body">
+          <span class="risk-tag risk-high">HIGH PRIORITY</span>
+          <p>SDC operates SAN and NAS; total raw storage likely multi-petabyte. DPDP Act 2023 mandates explicit encryption-at-rest, audit logging, and erasure-on-request at the storage layer.</p>
+          <ul class="domain-bullets">
+            <li>All-Flash Arrays (AFA/NVMe) for Tier-1 — SPARK, e-Procurement, land records</li>
+            <li>Hybrid Flash for Tier-2 — file shares, email archiving</li>
+            <li>Scale-out NAS / object storage + air-gapped backup (ransomware protection)</li>
+            <li>LTO-9 tape library for long-term retention and off-site vault</li>
+            <li>FC SAN switch refresh to 32 Gbps Fibre Channel</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="domain-card">
+        <div class="domain-card-header">
+          <div class="domain-num">3</div>
+          <div>
+            <h4>Network Infrastructure</h4>
+            <div class="domain-sub">Section 6 — Core, Internet, WAN, LB</div>
+          </div>
+        </div>
+        <div class="domain-card-body">
+          <span class="risk-tag risk-high">HIGH PRIORITY</span>
+          <p>Both facilities need capacity augmentation to support projected growth in e-Governance apps, K-FON aggregation, and AI-inference workloads. GoI mandates IPv6 readiness across all government infrastructure.</p>
+          <ul class="domain-bullets">
+            <li>100 GbE spine, 25 GbE downlinks — SDN-capable for multi-tenant VLAN management</li>
+            <li>Dual ISP with BGP failover; 10 Gbps per site, scalable to 40 Gbps</li>
+            <li>KSWAN integration — MPLS/SD-WAN for secure SDC-1 ↔ SDC-2 connectivity</li>
+            <li>ADC/Load Balancer renewal — L7, SSL offload, WAF, GSLB active-active</li>
+            <li>All equipment to support dual-stack IPv4/IPv6 as minimum specification</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="domain-card">
+        <div class="domain-card-header">
+          <div class="domain-num">4</div>
+          <div>
+            <h4>Cybersecurity Infrastructure</h4>
+            <div class="domain-sub">Section 7 — Priority Programme</div>
+          </div>
+        </div>
+        <div class="domain-card-body">
+          <span class="risk-tag risk-critical">⚠ CRITICAL — CAG FLAGGED</span>
+          <p>CAG Audit (2017) documented CERT-K vulnerabilities at SDC-1 (Dec 2013) that were never remediated by independent audit. Over 13 years without third-party security audit. Must be treated as a priority programme.</p>
+          <ul class="domain-bullets">
+            <li>NGFW with DPI, SSL/TLS inspection, IPS at 40 Gbps+ — both sites</li>
+            <li>WAF for all public-facing GoK portals; DDoS mitigation with ISP-level scrubbing</li>
+            <li>EDR/XDR for all SDC-managed servers; PAM with session recording &amp; vaulting</li>
+            <li>SIEM with threat intel + UEBA; SOAR for automated response playbooks</li>
+            <li>24×7 SOC (in-house or managed); STQC/CERT-In empanelled security audit</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="domain-card">
+        <div class="domain-card-header">
+          <div class="domain-num">5</div>
+          <div>
+            <h4>Power, Cooling &amp; Physical</h4>
+            <div class="domain-sub">Section 8 — UPS, CRAC, DG, Physical</div>
+          </div>
+        </div>
+        <div class="domain-card-body">
+          <span class="risk-tag risk-critical">⚠ CRITICAL — SDC-1 UPS BATTERIES</span>
+          <p>SDC-1 (2005) requires systematic UPS battery, cooling, and generator assessment. UPS batteries typically replaced every 3–5 years. SDC-2 benefits from Technopark shared utility but SDC-specific systems must be independently maintained.</p>
+          <ul class="domain-bullets">
+            <li>UPS battery string replacement at SDC-1 — minimum 30 min backup at full load</li>
+            <li>Modular UPS in Tier III-compatible 2N or N+1 configuration</li>
+            <li>Precision AC replacement with hot/cold aisle containment; target PUE &lt; 1.6</li>
+            <li>In-row cooling for GPU and high-density storage zones</li>
+            <li>Solar PV installation (Phase 1) — consistent with Kerala solar mandate</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="domain-card">
+        <div class="domain-card-header">
+          <div class="domain-num">6</div>
+          <div>
+            <h4>Backup &amp; Disaster Recovery</h4>
+            <div class="domain-sub">Section 9 — DR Site, Backup, Testing</div>
+          </div>
+        </div>
+        <div class="domain-card-body">
+          <span class="risk-tag risk-critical">⚠ CRITICAL — DR STATUS UNCLEAR</span>
+          <p>Warm-standby DR arrangement with Sify Technologies (Dec 2015). Current status — extended, renegotiated, or lapsed — not publicly documented. No published RTO/RPO metrics despite SPARK, e-Procurement, and e-Health dependency.</p>
+          <ul class="domain-bullets">
+            <li>DR site: STQC-empanelled managed provider OR KSITM-owned (Kochi InfoPark / Cyberpark Calicut)</li>
+            <li>Contractual SLA — RTO ≤ 4 hours, RPO ≤ 1 hour for Tier-1 services</li>
+            <li>Enterprise backup software with deduplication, encryption, cloud-tiering</li>
+            <li>Air-gapped backup; 3-2-1 policy enforcement with daily automated validation</li>
+            <li>Bi-annual full DR failover testing with documented RTO/RPO measurement</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PRIORITY TABLE -->
+  <section id="priorities">
+    <div class="section-title">
+      <span class="pill">Section 12</span>
+      <h3>Full Procurement Priority Table</h3>
+    </div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:auto;">
+      <table class="priority-table" id="priority-table">
+        <thead>
+          <tr>
+            <th>Procurement Item</th>
+            <th>Category</th>
+            <th>Priority</th>
+            <th>Target Quarter</th>
+            <th>Route</th>
+          </tr>
+        </thead>
+        <tbody id="priority-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- RECOMMENDATIONS -->
+  <section id="recommendations">
+    <div class="section-title">
+      <span class="pill">Section 14</span>
+      <h3>Recommendations</h3>
+    </div>
+    <div class="reco-grid">
+      <div class="reco-card">
+        <div class="reco-card-header imm">Immediate Actions — April to June 2026</div>
+        <ul class="reco-list">
+          <li><span class="bullet">▸</span><span>Full asset audit of both SDC facilities to establish accurate CMDB, identify EOL equipment, and validate capacity before finalising procurement quantities</span></li>
+          <li><span class="bullet">▸</span><span>Commission independent security audit of SDC-1 and SDC-2 by CERT-In empanelled auditor as emergency measure — given absence of third-party audit since 2013</span></li>
+          <li><span class="bullet">▸</span><span>Renew or renegotiate the Disaster Recovery arrangement (currently with Sify Technologies) with formally documented RTO/RPO commitments before 30 June 2026</span></li>
+          <li><span class="bullet">▸</span><span>Replace UPS battery strings at SDC-1 to eliminate the highest-probability single point of failure for power continuity</span></li>
+        </ul>
+      </div>
+      <div class="reco-card">
+        <div class="reco-card-header str">Strategic Decisions Required — Q1 to Q2</div>
+        <ul class="reco-list">
+          <li><span class="bullet">▸</span><span>Decide on virtualisation platform path: renew VMware licensing under Broadcom's model, or migrate to open-source hypervisor with commercial support — must resolve before compute hardware procurement</span></li>
+          <li><span class="bullet">▸</span><span>Define DR site strategy: managed service (lower capex, higher opex) vs. KSITM-owned facility at Kochi InfoPark or Cyberpark Calicut (higher capex, greater control)</span></li>
+          <li><span class="bullet">▸</span><span>Evaluate hybrid cloud model: engage MeitY and NIC to clarify MeghRaj (NIC Cloud) capacity available to GoK agencies to offset on-premises compute demand</span></li>
+        </ul>
+      </div>
+      <div class="reco-card">
+        <div class="reco-card-header lng">Longer-Term Roadmap</div>
+        <ul class="reco-list">
+          <li><span class="bullet">▸</span><span>Target Tier III certification for SDC-2 (Technopark) within 3 years, leveraging the facility's newer infrastructure as foundation</span></li>
+          <li><span class="bullet">▸</span><span>Develop a 5-year SDC Capacity Master Plan incorporating projected growth from K-AI, Smart City data platforms, ABDM, and DPDP Act compliance workloads</span></li>
+          <li><span class="bullet">▸</span><span>Establish dedicated KSITM-operated SOC co-located with the SDC, with formal MoU with CERT-K and Kerala Police Cyber Cell for threat intelligence sharing</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- DECISIONS SOUGHT -->
+  <section id="decisions">
+    <div class="section-title">
+      <span class="pill">Approvals Sought</span>
+      <h3>Decisions Sought from Secretary IT and Finance Department</h3>
+    </div>
+    <div class="decisions-grid">
+      <div class="decision-row">
+        <div class="decision-num">01</div>
+        <div class="decision-text">In-principle approval of the FY 2026–27 SDC procurement plan across six domains, for subsequent financial proposal preparation.</div>
+      </div>
+      <div class="decision-row">
+        <div class="decision-num">02</div>
+        <div class="decision-text">Concurrence for commissioning an independent security audit of SDC-1 and SDC-2 as an emergency measure within Q1.</div>
+      </div>
+      <div class="decision-row">
+        <div class="decision-num">03</div>
+        <div class="decision-text">Direction on DR strategy — managed service vs. KSITM-owned site — to finalise procurement route before Q2.</div>
+      </div>
+      <div class="decision-row">
+        <div class="decision-num">04</div>
+        <div class="decision-text">Authorisation to refresh KSITM vendor empanelment for servers, storage, networking, and cybersecurity appliances in Q1.</div>
+      </div>
+      <div class="decision-row">
+        <div class="decision-num">05</div>
+        <div class="decision-text">Budget sanction sequencing: P1 critical items in Q1; P2 high-priority items by Q2; P3/P4 items by Q3–Q4.</div>
+      </div>
+      <div class="decision-row">
+        <div class="decision-num">06</div>
+        <div class="decision-text">Concurrence for Tier III-compatible specifications in power and cooling procurement to avoid stranded investment.</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div style="margin-bottom:6px;">Government of Kerala &nbsp;|&nbsp; Kerala State IT Mission &nbsp;|&nbsp; State Data Centre Division</div>
+  <div>Procurement Planning Report FY 2026–27 &nbsp;·&nbsp; For Official Use &nbsp;·&nbsp; April 2026</div>
+</footer>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────
+const scheduleItems = [
+  { name: "Next-Generation Firewall (NGFW) — both sites",          cat: "Cybersecurity",       p: 1, qs: 0, qe: 0, route: "GeM / Tender" },
+  { name: "UPS Battery String Replacement — SDC-1",                cat: "Power Infrastructure", p: 1, qs: 0, qe: 0, route: "GeM" },
+  { name: "STQC / ISO 27001 Surveillance Audit",                   cat: "Compliance & Audit",  p: 1, qs: 0, qe: 0, route: "Tender" },
+  { name: "Facility Management Services (FMS) Renewal",            cat: "Managed Services",    p: 1, qs: 0, qe: 0, route: "Tender" },
+  { name: "Server Procurement — EOL Replacement, SDC-1",           cat: "Compute",             p: 1, qs: 0, qe: 1, route: "GeM" },
+  { name: "Disaster Recovery Site (Managed Service)",              cat: "Backup & DR",         p: 1, qs: 0, qe: 1, route: "Tender" },
+  { name: "All-Flash Storage Array — Tier-1 workloads",            cat: "Storage",             p: 2, qs: 1, qe: 1, route: "GeM / Tender" },
+  { name: "Core Network Switch Refresh (Spine / Leaf)",            cat: "Network",             p: 2, qs: 1, qe: 1, route: "GeM" },
+  { name: "Internet Bandwidth Augmentation — both sites",          cat: "Network",             p: 2, qs: 1, qe: 1, route: "GeM" },
+  { name: "SIEM Platform with Threat Intelligence",                cat: "Cybersecurity",       p: 2, qs: 1, qe: 1, route: "Tender" },
+  { name: "Backup Software Licence Renewal / Procurement",         cat: "Backup & DR",         p: 2, qs: 1, qe: 1, route: "GeM" },
+  { name: "Privileged Access Management (PAM) Solution",           cat: "Cybersecurity",       p: 2, qs: 1, qe: 2, route: "Tender" },
+  { name: "Precision Air-Conditioning Upgrade — SDC-1",            cat: "Cooling",             p: 3, qs: 2, qe: 2, route: "Tender" },
+  { name: "DCIM Platform (Power + Thermal + Asset)",               cat: "Management SW",       p: 3, qs: 2, qe: 2, route: "Tender" },
+  { name: "Physical Security Upgrade (CCTV + Access Control)",     cat: "Physical Security",   p: 3, qs: 2, qe: 2, route: "GeM / Tender" },
+  { name: "Enterprise Linux Subscription Renewal",                 cat: "Software",            p: 3, qs: 2, qe: 2, route: "GeM" },
+  { name: "GPU-Accelerated Nodes (AI Inference — K-AI)",           cat: "Compute",             p: 3, qs: 2, qe: 3, route: "Tender" },
+  { name: "Container Platform (Kubernetes) Infrastructure",        cat: "Cloud-Native",        p: 4, qs: 3, qe: 3, route: "GeM / Tender" },
+  { name: "Solar PV Installation (Phase 1)",                       cat: "Green DC",            p: 4, qs: 3, qe: 3, route: "Tender" },
+  { name: "DR Failover Testing — Bi-Annual Service",               cat: "Backup & DR",         p: 4, qs: 3, qe: 3, route: "Tender" }
+];
+
+const pLabels = ["", "P1 — Critical", "P2 — High", "P3 — Medium", "P4 — Standard"];
+const pClass  = ["", "p1",            "p2",        "p3",           "p4"];
+const barCls  = ["", "bar-p1",        "bar-p2",    "bar-p3",       "bar-p4"];
+
+// ── GANTT ──
+const ganttBody = document.getElementById('gantt-body');
+scheduleItems.forEach((item, i) => {
+  const row = document.createElement('div');
+  row.className = 'gantt-row' + (i % 2 === 0 ? ' even' : '');
+
+  // build 4 quarter cells
+  let qCells = '';
+  for (let q = 0; q < 4; q++) {
+    const active = q >= item.qs && q <= item.qe;
+    const first  = q === item.qs;
+    const last   = q === item.qe;
+    qCells += `<div class="gantt-cell">${
+      active
+        ? `<div class="${barCls[item.p]} gantt-bar" style="
+            border-radius:${first && last ? '4px' : first ? '4px 0 0 4px' : last ? '0 4px 4px 0' : '0'};
+            margin:${first ? '0 4px 0 4px' : last ? '0 4px 0 0' : '0'};
+          "></div>`
+        : ''
+    }</div>`;
+  }
+
+  row.innerHTML = `
+    <div class="gantt-cell item-name">${item.name}</div>
+    <div class="gantt-cell"><span class="priority-chip ${pClass[item.p]}">${'P'+item.p}</span></div>
+    ${qCells}
+  `;
+  ganttBody.appendChild(row);
+});
+
+// ── PRIORITY TABLE ──
+const tbody = document.getElementById('priority-tbody');
+scheduleItems.forEach((item, i) => {
+  const q = ['Q1 (Apr–Jun)', 'Q2 (Jul–Sep)', 'Q3 (Oct–Dec)', 'Q4 (Jan–Mar)'];
+  const qRange = item.qs === item.qe ? q[item.qs] : `${q[item.qs]} – ${q[item.qe]}`;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${item.name}</td>
+    <td>${item.cat}</td>
+    <td><span class="priority-chip ${pClass[item.p]}">${pLabels[item.p]}</span></td>
+    <td>${qRange}</td>
+    <td><span class="route-badge">${item.route}</span></td>
+  `;
+  tbody.appendChild(tr);
+});
+
+// ── NAV ACTIVE TRACKING ──
+const sections = document.querySelectorAll('section[id]');
+const navLinks  = document.querySelectorAll('nav a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 120) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+}, { passive: true });
+</script>
+</body>
+</html>
